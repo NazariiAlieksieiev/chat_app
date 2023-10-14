@@ -1,0 +1,55 @@
+.message-form {
+  display: flex;
+
+    &__form {
+      display: flex;
+      flex: 1;
+    }
+
+    &__input {
+    flex: 1;
+    height: 40px;
+    padding: 10px;
+    max-height: 150px;
+
+    border: 1px solid #272A35;
+    border-radius: 5px 0 0 5px;
+
+    background-color: #272A35;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    font-size: 14px;
+    color: #ffffff;
+
+    outline: none;
+    resize: none;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #cccccc;
+        border-radius: 3px;
+      }
+
+    }
+
+    &__button-send {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      background-image: url("../../image/send_ico.svg");
+      background-color: #272A35;
+      background-repeat: no-repeat;
+      background-position: center;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    }
+}
+
+.active {
+  background-color: #837DFF;
+}
