@@ -1,0 +1,10 @@
+.app__container {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: #292F3F;
+  border-radius: 5px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
