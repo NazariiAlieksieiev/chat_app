@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@mate-academy/eslint-config-react-typescript', 'plugin:cypress/recommended'],
+  extends: ['@mate-academy/eslint-config-react-typescript'],
   rules: {
     'max-len': ['error', {
       ignoreTemplateLiterals: true,
@@ -8,5 +8,6 @@ module.exports = {
     'jsx-a11y/label-has-associated-control': ["error", {
       assert: "either",
     }],
+    "no-alert": "error",
   },
 };

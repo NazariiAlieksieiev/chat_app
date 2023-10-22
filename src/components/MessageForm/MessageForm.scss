@@ -1,12 +1,13 @@
 .message-form {
   display: flex;
+  position: relative;
 
     &__form {
       display: flex;
       flex: 1;
     }
 
-    &__input {
+    &__text {
     flex: 1;
     height: 40px;
     padding: 10px;
@@ -18,7 +19,8 @@
     background-color: #272A35;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-    font-size: 14px;
+    font-size: 18px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
     color: #ffffff;
 
     outline: none;
@@ -47,9 +49,21 @@
       outline: none;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
+      &--active {
+        background-color: #837DFF;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+    }
+
+    &__error {
+      position: absolute;
+      top: 50;
+      transform: translateY(50%);
+      font-size: 14px;
+      color: #E74C3C;
     }
 }
 
-.active {
-  background-color: #837DFF;
-}

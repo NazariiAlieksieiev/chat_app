@@ -4,6 +4,20 @@ body {
   width: min-content;
   color: white;
   font-size: 14px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   background-image: url('./image/wallpaper-for-whatsapp-chat-background-21.jpg');
 }
 
+body > iframe {
+  display: none;
+}
+
+p {
+  margin: 0px;
+}
+
+@import url('./components/App/App.scss');
+@import url('./components/ChatWindow/ChatWindow.scss');
+@import url('./components/Message/Message.scss');
+@import url('./components/MessageForm/MessageForm.scss');
+@import url('./components/ModalSetName/ModalSetName.scss');
