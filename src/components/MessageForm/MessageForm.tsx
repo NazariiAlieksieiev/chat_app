@@ -1,21 +1,16 @@
 import React, { FormEvent, useState, ChangeEvent } from 'react';
 import classNames from 'classnames';
+import { useAppSelector } from '../../state/app/hooks';
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 const API_URL = process.env.REACT_APP_API_URL || '';
 const socket = new WebSocket(API_URL);
-const chatId = 1;
-
-function sendMessage(text: string, author: string) {
-  const message = JSON.stringify({ text, chatId, author });
-
-  socket.send(message);
-}
 
 export const MessageFrom: React.FC = () => {
   const [text, setText] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const author = localStorage.getItem('username');
+  const { activeChatId } = useAppSelector(state => state.chats);
 
   const inputHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
@@ -24,13 +19,18 @@ export const MessageFrom: React.FC = () => {
     setError(false);
   };
 
-  const formHandler = async (e: FormEvent<HTMLFormElement>) => {
+  const formHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const textForSend = text.trim();
 
     if (author && textForSend) {
-      await sendMessage(textForSend, author);
+      const message = JSON.stringify({
+        text: textForSend,
+        author,
+        chatId: activeChatId,
+      });
 
+      socket.send(message);
       setText('');
     } else {
       setError(true);

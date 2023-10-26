@@ -1,19 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageFrom } from '../MessageForm/MessageForm';
 import { Message } from '../Message/Message';
-import { MessageType } from '../../types/message';
-import { client } from '../../utils/axiosClient';
+import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
+import {
+  fetchMessages,
+  fetchMoreMessages,
+} from '../../state/features/messages';
 
-interface Props {
-  messages: MessageType[];
-  onSave: (value: MessageType[]) => void;
-}
-
-export const ChatWindow: React.FC<Props> = ({ messages, onSave }) => {
+export const ChatWindow: React.FC = () => {
   const messagesContainer = useRef<HTMLDivElement | null>(null);
-  const [offset, setOffset] = useState<number>(10);
-  const [error, setError] = useState<boolean>(false);
   const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(true);
+  const { messages, offset } = useAppSelector((state) => state.messages);
+  const { activeChatId } = useAppSelector((state) => state.chats);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (activeChatId) {
+      dispatch(fetchMessages(activeChatId));
+    }
+  }, [activeChatId, dispatch]);
 
   useEffect(() => {
     if (messagesContainer.current && isAutoScrolling) {
@@ -24,25 +30,12 @@ export const ChatWindow: React.FC<Props> = ({ messages, onSave }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        messagesContainer.current
-        && messagesContainer.current.scrollTop === 0
-        && !error
-      ) {
-        const moreMessages = async () => {
-          try {
-            const response: MessageType[] = await client.get(`/1?offset=${offset}`);
-
-            onSave(response.reverse());
-          } catch {
-            setError(true);
-          } finally {
-            setOffset((current) => current + 10);
-            setIsAutoScrolling(false);
-          }
-        };
-
-        moreMessages();
+      if (messagesContainer.current
+        && messagesContainer.current.scrollTop === 0) {
+        if (offset > 0) {
+          setIsAutoScrolling(false);
+          dispatch(fetchMoreMessages({ id: activeChatId, offset }));
+        }
       }
     };
 
@@ -55,7 +48,7 @@ export const ChatWindow: React.FC<Props> = ({ messages, onSave }) => {
         messagesContainer.current.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [error, onSave, offset]);
+  }, [offset, activeChatId, dispatch]);
 
   return (
     <div className="chat-window">

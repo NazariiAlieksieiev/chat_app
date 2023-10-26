@@ -1,10 +1,15 @@
-.app__container {
+.app {
   display: flex;
-  flex-direction: column;
-  width: 500px;
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: #292F3F;
-  border-radius: 5px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100vh;
+  background-color: #292f3f;
+
+  &__container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
 }

@@ -1,0 +1,49 @@
+.chat-nav {
+  width: 250px;
+  background-color: #272A35;
+  color: #fff;
+  padding: 20px;
+  transition: all 0.5s;
+  transform: translateX(0);
+
+  &__add-chat {
+    background-color: #292f3f;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #272a35;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #3a3f4c;
+      border-radius: 5px;
+    }
+  }
+
+  &__open-chat {
+    height: 30px;
+    flex-grow: 1;
+    background-color: #292f3f;
+    outline: none;
+    border: none;
+    cursor: pointer;
+
+    &-active {
+      background-color: #3a3f4c;
+    }
+  }
+}

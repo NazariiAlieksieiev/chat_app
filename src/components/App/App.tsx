@@ -1,25 +1,16 @@
 import React, { useState } from 'react';
 import { ChatWindow } from '../ChatWindow/ChatWindow';
-import { MessageType } from '../../types/message';
-import { WebSocketDownLoader } from '../WSDownloader/WebSocketDownloader';
 import { ModalSetName } from '../ModalSetName/ModalSetName';
+import { ChatNav } from '../ChatNav/ChatNav';
+import { WSLoader } from '../WSLoader/WSLoader';
 
 export const App: React.FC = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
   const [modalActive, setModalActive] = useState<boolean>(true);
-
   const isLogged = localStorage.getItem('username');
 
-  const saveData = (message: MessageType) => {
-    setMessages(current => [...current, message]);
-  };
-
-  const addMessages = (newMessages: MessageType[]) => {
-    setMessages(current => [...newMessages, ...current]);
-  };
-
   return (
-    <>
+    <div className="app">
+      <ChatNav />
       {!isLogged
         && (
           <ModalSetName
@@ -29,20 +20,10 @@ export const App: React.FC = () => {
         )}
 
       <div className="app__container">
-        {isLogged
-          && (
-            <WebSocketDownLoader
-              onData={saveData}
-              onSave={setMessages}
-            />
-          )}
-
-        <ChatWindow
-          messages={messages}
-          onSave={addMessages}
-        />
+        <WSLoader />
+        <ChatWindow />
       </div>
-    </>
+    </div>
   );
 };
 
