@@ -5,14 +5,14 @@ import { getChats } from '../../api/chats';
 
 type ChatsState = {
   chats: Chat[],
-  activeChatId: number | null,
+  activeChat: Chat | null,
   isLoading: boolean,
   hasError: boolean,
 };
 
 const initialState: ChatsState = {
   chats: [],
-  activeChatId: null,
+  activeChat: null,
   isLoading: false,
   hasError: false,
 };
@@ -26,7 +26,10 @@ const chatsSlice = createSlice({
   initialState,
   reducers: {
     selectChat: (state, action) => {
-      state.activeChatId = action.payload;
+      state.activeChat = action.payload;
+    },
+    addChat: (state, action) => {
+      state.chats.push(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -47,4 +50,4 @@ const chatsSlice = createSlice({
 });
 
 export default chatsSlice.reducer;
-export const { selectChat } = chatsSlice.actions;
+export const { selectChat, addChat } = chatsSlice.actions;

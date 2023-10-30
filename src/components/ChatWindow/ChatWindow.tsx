@@ -11,15 +11,15 @@ export const ChatWindow: React.FC = () => {
   const messagesContainer = useRef<HTMLDivElement | null>(null);
   const [isAutoScrolling, setIsAutoScrolling] = useState<boolean>(true);
   const { messages, offset } = useAppSelector((state) => state.messages);
-  const { activeChatId } = useAppSelector((state) => state.chats);
+  const { activeChat } = useAppSelector((state) => state.chats);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (activeChatId) {
-      dispatch(fetchMessages(activeChatId));
+    if (activeChat) {
+      dispatch(fetchMessages(activeChat?.id));
     }
-  }, [activeChatId, dispatch]);
+  }, [activeChat, dispatch]);
 
   useEffect(() => {
     if (messagesContainer.current && isAutoScrolling) {
@@ -32,9 +32,9 @@ export const ChatWindow: React.FC = () => {
     const handleScroll = () => {
       if (messagesContainer.current
         && messagesContainer.current.scrollTop === 0) {
-        if (offset > 0) {
+        if (offset > 0 && activeChat?.id) {
           setIsAutoScrolling(false);
-          dispatch(fetchMoreMessages({ id: activeChatId, offset }));
+          dispatch(fetchMoreMessages({ id: activeChat.id, offset }));
         }
       }
     };
@@ -48,7 +48,7 @@ export const ChatWindow: React.FC = () => {
         messagesContainer.current.removeEventListener('scroll', handleScroll);
       }
     };
-  }, [offset, activeChatId, dispatch]);
+  }, [offset, activeChat, dispatch]);
 
   return (
     <div className="chat-window">

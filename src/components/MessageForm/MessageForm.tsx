@@ -1,4 +1,6 @@
-import React, { FormEvent, useState, ChangeEvent } from 'react';
+import React, {
+  FormEvent, useState, ChangeEvent,
+} from 'react';
 import classNames from 'classnames';
 import { useAppSelector } from '../../state/app/hooks';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -10,7 +12,7 @@ export const MessageFrom: React.FC = () => {
   const [text, setText] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
   const author = localStorage.getItem('username');
-  const { activeChatId } = useAppSelector(state => state.chats);
+  const { activeChat } = useAppSelector(state => state.chats);
 
   const inputHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
@@ -25,9 +27,10 @@ export const MessageFrom: React.FC = () => {
 
     if (author && textForSend) {
       const message = JSON.stringify({
+        type: 'message',
         text: textForSend,
         author,
-        chatId: activeChatId,
+        chatId: activeChat?.id,
       });
 
       socket.send(message);

@@ -2,24 +2,27 @@ import React, { MouseEvent } from 'react';
 import '../ChatNav/ChatNav.scss';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { selectChat } from '../../state/features/chats';
+import { Chat } from '../../types/chat';
 
 interface Props {
-  name: string,
-  id: number,
+  chat: Chat,
 }
 
 export const ChatNavItem: React.FC<Props> = ({
-  name, id,
+  chat,
 }) => {
-  const { activeChatId } = useAppSelector(state => state.chats);
+  const { activeChat } = useAppSelector(state => state.chats);
+
   const dispatch = useAppDispatch();
 
   const handleChatIdButton = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    dispatch(selectChat(id));
+    dispatch(selectChat(chat));
   };
 
-  const isActive = activeChatId === id ? 'chat-nav__open-chat-active' : '';
+  const isActive = activeChat?.id === chat.id
+    ? 'chat-nav__open-chat-active'
+    : '';
 
   return (
     <li className="chat-nav__item">
@@ -28,7 +31,7 @@ export const ChatNavItem: React.FC<Props> = ({
         className={`chat-nav__open-chat ${isActive}`}
         onClick={handleChatIdButton}
       >
-        {name}
+        {chat.name}
       </button>
       <button type="button">X</button>
     </li>

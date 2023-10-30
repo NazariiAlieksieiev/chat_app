@@ -1,33 +1,56 @@
+/* eslint-disable no-console */
 import { useEffect } from 'react';
-import { useAppDispatch } from '../../state/app/hooks';
+import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { addMessage } from '../../state/features/messages';
+import { addChat } from '../../state/features/chats';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL || '';
 
 export const WSLoader: React.FC = () => {
+  const { activeChat } = useAppSelector(state => state.chats);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!API_URL) {
-      throw new Error('Invalid API');
-    }
-
     const socket = new WebSocket(API_URL);
 
-    socket.addEventListener('message', (event) => {
-      const message = JSON.parse(event.data);
+    if (activeChat?.id) {
+      socket.onopen = () => {
+        const message = {
+          type: 'chatId',
+          id: activeChat?.id,
+        };
 
-      dispatch(addMessage(message));
-    });
+        socket.send(JSON.stringify(message));
+      };
 
-    return () => {
-      socket.close();
-    };
-  }, []);
+      socket.addEventListener('message', (event) => {
+        const receivedData = JSON.parse(event.data);
+
+        console.log(receivedData);
+
+        switch (receivedData.type) {
+          case 'chat':
+            dispatch(addChat(receivedData.newChat));
+            break;
+          case 'message':
+            dispatch(addMessage(receivedData.newMessage));
+            break;
+          default:
+        }
+      });
+    }
+
+    return () => socket.close();
+  }, [activeChat, dispatch]);
+
+  // useEffect(() => {
+  //   const socket = new WebSocket(API_URL);
+  //   return () => socket.close();
+  // }, [activeChat]);
 
   return (
     <h1 className="title">
-      Chat application
+      {activeChat?.name}
     </h1>
   );
 };
