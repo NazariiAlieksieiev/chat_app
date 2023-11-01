@@ -5,8 +5,7 @@ import classNames from 'classnames';
 import { useAppSelector } from '../../state/app/hooks';
 // eslint-disable-next-line import/no-extraneous-dependencies
 
-const API_URL = process.env.REACT_APP_API_URL || '';
-const socket = new WebSocket(API_URL);
+import { socket } from '../../api/socket';
 
 export const MessageFrom: React.FC = () => {
   const [text, setText] = useState<string>('');

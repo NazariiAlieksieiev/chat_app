@@ -5,9 +5,12 @@ import './ChatNav.scss';
 import { ChatNavItem } from '../ChatNavItem/ChatNavItem';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { fetchChats } from '../../state/features/chats';
+import {
+  errorNotification,
+  successNotification,
+} from '../../utils/notification';
 
-const API_URL = process.env.REACT_APP_API_URL || '';
-const socket = new WebSocket(API_URL);
+import { socket } from '../../api/socket';
 
 export const ChatNav: React.FC = () => {
   const [creatingNewChat, setCreatingNewChat] = useState<boolean>(false);
@@ -18,7 +21,6 @@ export const ChatNav: React.FC = () => {
     // hasError,
   } = useAppSelector(state => state.chats);
   const userName = localStorage.getItem('username');
-
   const dispatch = useAppDispatch();
 
   const newChat = (e: MouseEvent<HTMLButtonElement>) => {
@@ -28,14 +30,23 @@ export const ChatNav: React.FC = () => {
 
   const createChat = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const message = {
+    if (!chatName) {
+      errorNotification('Chat name ca\'nt be empty');
+
+      return;
+    }
+
+    const chat = {
       type: 'chat',
       name: chatName,
       chatAuthor: userName,
     };
 
-    socket.send(JSON.stringify(message));
+    socket.send(JSON.stringify(chat));
+
+    successNotification('Chat created');
     setCreatingNewChat(false);
+    setChatName('');
   };
 
   const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -53,30 +64,38 @@ export const ChatNav: React.FC = () => {
     <div
       className="chat-nav"
     >
-      <div className="chat-nav__new-chat">
-        <button
-          type="submit"
-          className="chat-nav__add-chat"
-          onClick={newChat}
-        >
-          New chat
-        </button>
-        {creatingNewChat
+      <div className="chat-nav__add-chat">
+        {!creatingNewChat
           && (
             <button
-              type="button"
-              onClick={createChat}
+              type="submit"
+              className="chat-nav__new-chat"
+              onClick={newChat}
             >
-              Create
+              New chat
             </button>
           )}
 
-        <input
-          type="text"
-          placeholder="enter chat name"
-          value={chatName}
-          onChange={inputHandler}
-        />
+        {creatingNewChat
+          && (
+            <>
+              <button
+                type="button"
+                className="chat-nav__create-chat"
+                onClick={createChat}
+              >
+                Create
+              </button>
+
+              <input
+                type="text"
+                className="chat-nav__new-chat-name"
+                placeholder="Enter chat name"
+                value={chatName}
+                onChange={inputHandler}
+              />
+            </>
+          )}
       </div>
 
       <nav className="chat-nav__nav">

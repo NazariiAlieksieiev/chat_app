@@ -1,4 +1,6 @@
 .chat-nav {
+  display: flex;
+  flex-direction: column;
   width: 250px;
   background-color: #272A35;
   color: #fff;
@@ -7,12 +9,36 @@
   transform: translateX(0);
 
   &__add-chat {
+
+  }
+
+  &__new-chat {
     background-color: #292f3f;
+    width: 100%;
+
     color: #fff;
     border: none;
+    border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+  }
+
+  &__create-chat {
+    background-color: #292f3f;
+    color: #fff;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  &__new-chat-name {
+    padding: 10px;
+    outline: none;
+    border: none;
+    border-radius: 0 5px 5px 0;
   }
 
   &__list {
@@ -26,7 +52,7 @@
     padding: 10px;
     border-bottom: 1px solid #272a35;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.5s;
 
     &:hover {
       background-color: #3a3f4c;
@@ -40,6 +66,7 @@
     background-color: #292f3f;
     outline: none;
     border: none;
+    border-radius: 5px 0 0 5px;
     cursor: pointer;
 
     &-active {

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
+import { ToastContainer } from 'react-toastify';
 import { ChatWindow } from '../ChatWindow/ChatWindow';
 import { ModalSetName } from '../ModalSetName/ModalSetName';
 import { ChatNav } from '../ChatNav/ChatNav';
 import { WSLoader } from '../WSLoader/WSLoader';
-// import { useAppSelector } from '../../state/app/hooks';
 
 export const App: React.FC = () => {
   const [modalActive, setModalActive] = useState<boolean>(true);
   const isLogged = localStorage.getItem('username');
-  // const { activeChat } = useAppSelector(state => state.chats);
 
   return (
     <div className="app">
@@ -25,6 +24,8 @@ export const App: React.FC = () => {
         <WSLoader />
         <ChatWindow />
       </div>
+
+      <ToastContainer />
     </div>
   );
 };
