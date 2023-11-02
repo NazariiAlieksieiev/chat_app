@@ -9,5 +9,6 @@ module.exports = {
       assert: "either",
     }],
     "no-alert": "error",
+    'jsx-a11y/no-autofocus': 'off',
   },
 };

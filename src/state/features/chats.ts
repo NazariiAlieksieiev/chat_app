@@ -6,6 +6,7 @@ import { getChats } from '../../api/chats';
 type ChatsState = {
   chats: Chat[],
   activeChat: Chat | null,
+  renamedChat: Chat | null,
   isLoading: boolean,
   hasError: boolean,
 };
@@ -13,6 +14,7 @@ type ChatsState = {
 const initialState: ChatsState = {
   chats: [],
   activeChat: null,
+  renamedChat: null,
   isLoading: false,
   hasError: false,
 };
@@ -34,6 +36,17 @@ const chatsSlice = createSlice({
     deleteChat: (state, action) => {
       state.chats = state.chats.filter(chat => chat.id !== action.payload);
     },
+    renameChat: (state, action) => {
+      const { id } = action.payload;
+      const chatIndex = state.chats.findIndex(c => c.id === id);
+
+      if (chatIndex !== -1) {
+        state.chats[chatIndex] = action.payload;
+      }
+    },
+    setRenamedChat: (state, action) => {
+      state.renamedChat = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchChats.pending, (state) => {
@@ -53,4 +66,10 @@ const chatsSlice = createSlice({
 });
 
 export default chatsSlice.reducer;
-export const { selectChat, addChat, deleteChat } = chatsSlice.actions;
+export const {
+  selectChat,
+  addChat,
+  deleteChat,
+  renameChat,
+  setRenamedChat,
+} = chatsSlice.actions;

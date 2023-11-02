@@ -1,8 +1,13 @@
-import React, { MouseEvent } from 'react';
+import React, {
+  ChangeEvent, KeyboardEvent, MouseEvent, useState, FormEvent, FocusEvent,
+} from 'react';
 import '../ChatNav/ChatNav.scss';
-import { error } from 'console';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
-import { selectChat } from '../../state/features/chats';
+import {
+  renameChat,
+  selectChat,
+  setRenamedChat,
+} from '../../state/features/chats';
 import { Chat } from '../../types/chat';
 import { socket } from '../../api/socket';
 import { errorNotification } from '../../utils/notification';
@@ -14,19 +19,18 @@ interface Props {
 export const ChatNavItem: React.FC<Props> = ({
   chat,
 }) => {
-  const { activeChat } = useAppSelector(state => state.chats);
+  const { activeChat, renamedChat } = useAppSelector(state => state.chats);
+  const [newName, setNewName] = useState<string>('');
   const username = localStorage.getItem('username');
-
   const dispatch = useAppDispatch();
+  const isActive = activeChat?.id === chat.id
+    ? 'chat-nav__open-chat-active'
+    : '';
 
   const handleChatIdButton = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatch(selectChat(chat));
   };
-
-  const isActive = activeChat?.id === chat.id
-    ? 'chat-nav__open-chat-active'
-    : '';
 
   const deleteChat = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -48,12 +52,97 @@ export const ChatNavItem: React.FC<Props> = ({
     socket.send(JSON.stringify(deleteChatMessage));
   };
 
+  const setToRename = (
+    e: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement>,
+    value: Chat | null,
+  ) => {
+    e.preventDefault();
+
+    if (!value) {
+      dispatch(setRenamedChat(value));
+
+      return;
+    }
+
+    if (value?.chatAuthor !== username) {
+      errorNotification('Chat can rename only his author');
+
+      return;
+    }
+
+    dispatch(setRenamedChat(value));
+  };
+
+  const newNameHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const { value } = e.target;
+    const name = value.trim();
+
+    if (!name) {
+      errorNotification('Chat name ca\'nt be empty');
+    }
+
+    setNewName(name);
+  };
+
+  const rename = (
+    e: FormEvent<HTMLFormElement> | FocusEvent<HTMLInputElement>,
+  ) => {
+    e.preventDefault();
+    const params = {
+      chatId: chat.id,
+      newTitle: newName,
+      chatAuthor: renamedChat?.chatAuthor,
+    };
+
+    if (!newName) {
+      errorNotification('Chat name can\'nt be empty');
+      renameChat({ ...params, newTitle: chat.name });
+      dispatch(setRenamedChat(null));
+
+      return;
+    }
+
+    dispatch(setRenamedChat(null));
+    const renameChatMessage = {
+      type: 'renameChat',
+      ...params,
+    };
+
+    setNewName('');
+
+    socket.send(JSON.stringify(renameChatMessage));
+  };
+
+  const escapeInput = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape'
+    ) {
+      setToRename(e, null);
+    }
+  };
+
   return (
     <li className="chat-nav__item">
+      {chat.id === renamedChat?.id
+        ? (
+          <form onSubmit={rename}>
+            <input
+              type="text"
+              className="chat-nav__new-name"
+              value={newName}
+              onKeyUp={escapeInput}
+              onChange={newNameHandler}
+              onBlur={rename}
+              autoFocus
+            />
+          </form>
+        )
+        : <></>}
       <button
         type="button"
         className={`chat-nav__open-chat ${isActive}`}
         onClick={handleChatIdButton}
+        onDoubleClick={(e) => setToRename(e, chat)}
       >
         {chat.name}
       </button>

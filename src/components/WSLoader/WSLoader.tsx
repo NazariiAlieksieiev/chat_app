@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { addMessage } from '../../state/features/messages';
-import { addChat, deleteChat } from '../../state/features/chats';
+import { addChat, deleteChat, renameChat } from '../../state/features/chats';
 
 const API_URL = process.env.REACT_APP_API_URL || '';
 
@@ -31,6 +31,7 @@ export const WSLoader: React.FC = () => {
         newChat,
         newMessage,
         chatId,
+        renamedChat,
       } = receivedData;
 
       console.log(receivedData);
@@ -44,6 +45,9 @@ export const WSLoader: React.FC = () => {
           break;
         case 'deleteChat':
           dispatch(deleteChat(chatId));
+          break;
+        case 'renameChat':
+          dispatch(renameChat(renamedChat));
           break;
         default:
       }
