@@ -1,6 +1,8 @@
 .message-form {
   display: flex;
-  position: relative;
+  flex-direction: column;
+  align-self: flex-end;
+  width: 100%;
 
     &__form {
       display: flex;
@@ -56,14 +58,6 @@
           background-color: #0056b3;
         }
       }
-    }
-
-    &__error {
-      position: absolute;
-      top: 50;
-      transform: translateY(50%);
-      font-size: 14px;
-      color: #E74C3C;
     }
 }
 

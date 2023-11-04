@@ -1,7 +1,14 @@
 import React, {
-  ChangeEvent, KeyboardEvent, MouseEvent, useState, FormEvent, FocusEvent,
+  ChangeEvent,
+  KeyboardEvent,
+  MouseEvent,
+  useState,
+  FormEvent,
+  FocusEvent,
+  useEffect,
 } from 'react';
 import '../ChatNav/ChatNav.scss';
+import { useAnimate, usePresence, stagger } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import {
   renameChat,
@@ -11,6 +18,7 @@ import {
 import { Chat } from '../../types/chat';
 import { socket } from '../../api/socket';
 import { errorNotification } from '../../utils/notification';
+import { EventType } from '../../types/event';
 
 interface Props {
   chat: Chat,
@@ -26,6 +34,8 @@ export const ChatNavItem: React.FC<Props> = ({
   const isActive = activeChat?.id === chat.id
     ? 'chat-nav__open-chat-active'
     : '';
+  const [isPresent, safeToRemove] = usePresence();
+  const [scope, animate] = useAnimate();
 
   const handleChatIdButton = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -44,7 +54,7 @@ export const ChatNavItem: React.FC<Props> = ({
     }
 
     const deleteChatMessage = {
-      type: 'deleteChat',
+      type: EventType.DeleteChat,
       chatAuthor,
       chatId: id,
     };
@@ -105,7 +115,7 @@ export const ChatNavItem: React.FC<Props> = ({
 
     dispatch(setRenamedChat(null));
     const renameChatMessage = {
-      type: 'renameChat',
+      type: EventType.RenameChat,
       ...params,
     };
 
@@ -121,8 +131,41 @@ export const ChatNavItem: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    if (isPresent) {
+      const enterAnimation = async () => {
+        await animate(scope.current,
+          {
+            opacity: [0, 1],
+          },
+          {
+            duration: 0.5,
+            delay: stagger(0.2),
+          });
+      };
+
+      enterAnimation();
+    } else {
+      const exitAnimation = async () => {
+        await animate(
+          scope.current,
+          {
+            opacity: [1, 0],
+          },
+          {
+            duration: 0.5,
+            delay: stagger(0.2),
+          },
+        );
+        safeToRemove();
+      };
+
+      exitAnimation();
+    }
+  }, []);
+
   return (
-    <li className="chat-nav__item">
+    <li className="chat-nav__item" ref={scope}>
       {chat.id === renamedChat?.id
         ? (
           <form onSubmit={rename}>

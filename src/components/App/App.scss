@@ -1,15 +1,15 @@
 .app {
   display: flex;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   background-color: #292f3f;
 
   &__container {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    flex: 1 1;
+    justify-content: center;
+    height: 95%;
     padding: 10px 20px;
-    border-radius: 5px;
   }
 }

@@ -62,9 +62,16 @@ const messagesSlice = createSlice({
     });
 
     builder.addCase(fetchMoreMessages.fulfilled, (state, action) => {
-      state.messages = [...action.payload.reverse(), ...state.messages];
+      const newMessages = action.payload.reverse();
+
+      if (newMessages.length !== 0) {
+        state.messages.unshift(...newMessages);
+        state.offset += action.payload.length;
+
+        state.isLoading = false;
+      }
+
       state.isLoading = false;
-      state.offset += action.payload.length;
     });
 
     builder.addCase(fetchMoreMessages.rejected, (state) => {

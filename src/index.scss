@@ -14,9 +14,11 @@ p {
   margin: 0px;
 }
 
+@import url('./components/StartPage/StartPage.scss');
 @import url('react-toastify/dist/ReactToastify.css');
 @import url('./components/App/App.scss');
 @import url('./components/ChatWindow/ChatWindow.scss');
 @import url('./components/Message/Message.scss');
 @import url('./components/MessageForm/MessageForm.scss');
 @import url('./components/ModalSetName/ModalSetName.scss');
+

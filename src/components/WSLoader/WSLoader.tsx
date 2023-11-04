@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { addMessage } from '../../state/features/messages';
 import { addChat, deleteChat, renameChat } from '../../state/features/chats';
+import { EventType } from '../../types/event';
 
 const API_URL = process.env.REACT_APP_API_URL || '';
 
@@ -16,7 +16,7 @@ export const WSLoader: React.FC = () => {
     if (activeChat?.id) {
       socket.onopen = () => {
         const message = {
-          type: 'chatId',
+          type: EventType.ChatId,
           id: activeChat?.id,
         };
 
@@ -24,7 +24,7 @@ export const WSLoader: React.FC = () => {
       };
     }
 
-    socket.addEventListener('message', (event) => {
+    socket.onmessage = (event) => {
       const receivedData = JSON.parse(event.data);
       const {
         type,
@@ -34,24 +34,22 @@ export const WSLoader: React.FC = () => {
         renamedChat,
       } = receivedData;
 
-      console.log(receivedData);
-
       switch (type) {
-        case 'chat':
+        case EventType.Chat:
           dispatch(addChat(newChat));
           break;
-        case 'message':
+        case EventType.Message:
           dispatch(addMessage(newMessage));
           break;
-        case 'deleteChat':
+        case EventType.DeleteChat:
           dispatch(deleteChat(chatId));
           break;
-        case 'renameChat':
+        case EventType.RenameChat:
           dispatch(renameChat(renamedChat));
           break;
         default:
       }
-    });
+    };
 
     return () => socket.close();
   }, [activeChat, dispatch]);

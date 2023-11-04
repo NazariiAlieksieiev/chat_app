@@ -1,25 +1,29 @@
 import React, {
-  useEffect, useState, MouseEvent, ChangeEvent,
+  useEffect, useState, MouseEvent, ChangeEvent, KeyboardEvent,
 } from 'react';
 import './ChatNav.scss';
+import { RotatingLines } from 'react-loader-spinner';
 import { ChatNavItem } from '../ChatNavItem/ChatNavItem';
 import { useAppDispatch, useAppSelector } from '../../state/app/hooks';
 import { fetchChats } from '../../state/features/chats';
 import {
   errorNotification,
   successNotification,
+  warningNotification,
 } from '../../utils/notification';
 
 import { socket } from '../../api/socket';
+import { EventType } from '../../types/event';
 
 export const ChatNav: React.FC = () => {
   const [creatingNewChat, setCreatingNewChat] = useState<boolean>(false);
   const [chatName, setChatName] = useState<string>('');
   const {
     chats,
-    // isLoading,
-    // hasError,
+    isLoading,
+    hasError,
   } = useAppSelector(state => state.chats);
+
   const userName = localStorage.getItem('username');
   const dispatch = useAppDispatch();
 
@@ -28,16 +32,18 @@ export const ChatNav: React.FC = () => {
     setCreatingNewChat(true);
   };
 
-  const createChat = (e: MouseEvent<HTMLButtonElement>) => {
+  const createChat = (
+    e: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement>,
+  ) => {
     e.preventDefault();
     if (!chatName) {
-      errorNotification('Chat name ca\'nt be empty');
+      warningNotification('Chat name ca\'nt be empty');
 
       return;
     }
 
     const chat = {
-      type: 'chat',
+      type: EventType.Chat,
       name: chatName,
       chatAuthor: userName,
     };
@@ -56,28 +62,39 @@ export const ChatNav: React.FC = () => {
     setChatName(name);
   };
 
+  const keyboardInputHandler = (
+    e: KeyboardEvent<HTMLInputElement>,
+  ) => {
+    e.preventDefault();
+
+    if (e.key === 'Escape') {
+      setCreatingNewChat(false);
+    }
+
+    if (e.key === 'Enter') {
+      createChat(e);
+    }
+  };
+
   useEffect(() => {
-    dispatch(fetchChats());
-  }, []);
+    if (userName) {
+      dispatch(fetchChats());
+    }
+  }, [userName]);
+
+  useEffect(() => {
+    if (hasError) {
+      errorNotification('Can\'t download chats');
+    }
+  }, [hasError]);
 
   return (
     <div
       className="chat-nav"
     >
       <div className="chat-nav__add-chat">
-        {!creatingNewChat
-          && (
-            <button
-              type="submit"
-              className="chat-nav__new-chat"
-              onClick={newChat}
-            >
-              New chat
-            </button>
-          )}
-
         {creatingNewChat
-          && (
+          ? (
             <>
               <button
                 type="button"
@@ -93,21 +110,44 @@ export const ChatNav: React.FC = () => {
                 placeholder="Enter chat name"
                 value={chatName}
                 onChange={inputHandler}
+                onKeyUp={keyboardInputHandler}
+                autoFocus
               />
             </>
+          ) : (
+            <button
+              type="submit"
+              className="chat-nav__new-chat"
+              onClick={newChat}
+            >
+              New chat
+            </button>
           )}
       </div>
 
-      <nav className="chat-nav__nav">
-        <ul className="chat-nav__list">
-          {chats.map(chat => (
-            <ChatNavItem
-              chat={chat}
-              key={chat.id}
-            />
-          ))}
-        </ul>
-      </nav>
+      {isLoading
+        ? (
+          <RotatingLines
+            strokeColor="grey"
+            strokeWidth="3"
+            animationDuration="0.9"
+            width="100"
+            visible
+          />
+        ) : (
+          <nav className="chat-nav__nav">
+            <ul
+              className="chat-nav__list"
+            >
+              {chats.map(chat => (
+                <ChatNavItem
+                  chat={chat}
+                  key={chat.id}
+                />
+              ))}
+            </ul>
+          </nav>
+        )}
     </div>
   );
 };

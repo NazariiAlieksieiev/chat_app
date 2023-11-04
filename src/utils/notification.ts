@@ -13,3 +13,7 @@ export const errorNotification = (text: string) => {
 export const successNotification = (text: string) => {
   return toast.success(text, notificationParams);
 };
+
+export const warningNotification = (text: string) => {
+  return toast.warn(text, notificationParams);
+};
