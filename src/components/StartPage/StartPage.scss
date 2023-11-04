@@ -1,0 +1,49 @@
+.start-page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+
+  &__header {
+    width: 100%;
+  }
+
+  &__title {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  &__description {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  &__feature {
+    background-color: #292f3f;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: calc(50% - 20px);
+    margin-bottom: 20px;
+
+    &__title {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    &__description {
+      font-size: 18px;
+    }
+  }
+
+  &__footer {
+    width: 100%;
+  }
+
+  &__footer-text {
+    font-size: 18px;
+  }
+}
