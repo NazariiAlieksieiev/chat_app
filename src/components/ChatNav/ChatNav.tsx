@@ -57,9 +57,8 @@ export const ChatNav: React.FC = () => {
 
   const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const name = value.trim();
 
-    setChatName(name);
+    setChatName(value);
   };
 
   const keyboardInputHandler = (
