@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const instance = axios.create({
-  baseURL: 'http://localhost:3005',
+  baseURL: BASE_URL,
   // application/json is a default Content-Type
 });
 
